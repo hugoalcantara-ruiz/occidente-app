@@ -1,0 +1,360 @@
+/* =========================================
+   1. ESTILOS BASE DEL MAPA Y CONTENEDOR
+   ========================================= */
+html, body, #map {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    background-color: #ffffff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* =========================================
+   2. ESTILOS PARA POPUPS (Ventanas de Info)
+   ========================================= */
+.leaflet-popup-content {
+    max-height: 70vh;
+    min-width: 200px;
+    overflow-y: auto;
+    font-size: 13px;
+    line-height: 1.4;
+    color: #333;
+}
+.leaflet-popup-content th {
+    text-align: left;
+    vertical-align: top;
+    color: #0078A8; /* Azul profesional para títulos */
+    padding-right: 10px;
+}
+.leaflet-container a.leaflet-popup-close-button {
+    color: #999;
+    font-size: 18px;
+}
+
+/* =========================================
+   3. PANEL DE FILTROS (Departamento/Muni)
+   ========================================= */
+#controls {
+    position: absolute;
+    /* UBICACIÓN: Bajamos el panel 140px para librar los botones de 
+       Zoom, Medición, Búsqueda y Geolocalización que están arriba */
+    top: 410px; 
+    left: 10px;
+    z-index: 1000;
+    
+    background: rgba(255, 255, 255, 0.95); /* Ligeramente traslúcido */
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    width: 250px;
+    transition: all 0.3s ease;
+    border-left: 4px solid #0078A8; /* Decoración lateral */
+}
+
+/* Título del panel */
+.control-header h3 {
+    margin: 0 0 10px 0;
+    font-size: 15px;
+    color: #333;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Inputs y Selects */
+.control-group {
+    margin-bottom: 12px;
+}
+.control-group label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: #555;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}
+select {
+    width: 100%;
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 13px;
+    background-color: #fff;
+}
+select:disabled {
+    background-color: #f0f0f0;
+    color: #999;
+    cursor: not-allowed;
+}
+
+/* =========================================
+   4. LEYENDA AVANZADA (Sliders y Colapsables)
+   ========================================= */
+/* Ajuste del contenedor general de capas de Leaflet */
+.leaflet-control-layers {
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2) !important;
+    border-radius: 8px !important;
+    border: none !important;
+}
+.leaflet-control-layers-expanded {
+    padding: 10px !important;
+    min-width: 250px;
+    max-height: 80vh; /* Scroll si hay muchas capas */
+    overflow-y: auto;
+}
+
+/* Ítem individual de la leyenda */
+.legend-item-container {
+    background: #fdfdfd;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    padding: 8px;
+    margin-bottom: 8px;
+}
+.legend-item-container strong {
+    font-size: 12px;
+    color: #333;
+    display: block;
+    margin-bottom: 4px;
+}
+
+/* --- SLIDER DE TRANSPARENCIA --- */
+.opacity-slider {
+    -webkit-appearance: none; /* Quitar estilo por defecto */
+    width: 100%;
+    height: 4px;
+    background: #ddd;
+    border-radius: 2px;
+    outline: none;
+    margin: 8px 0;
+}
+/* Bolita del slider (Chrome/Safari/Edge) */
+.opacity-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    background: #0078A8;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    transition: background .2s;
+}
+.opacity-slider::-webkit-slider-thumb:hover {
+    background: #005f85;
+}
+/* Bolita del slider (Firefox) */
+.opacity-slider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    background: #0078A8;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+/* --- ACORDEÓN (DETAILS / SUMMARY) --- */
+details {
+    margin-top: 5px;
+    border-top: 1px dashed #eee;
+    padding-top: 5px;
+}
+details summary {
+    cursor: pointer;
+    font-size: 11px;
+    color: #666;
+    outline: none;
+    list-style: none; /* Quitar triángulo default */
+    font-weight: bold;
+    user-select: none;
+}
+/* Quitar triángulo default en Webkit */
+details summary::-webkit-details-marker {
+    display: none;
+}
+/* Flecha y texto personalizado */
+details summary::after {
+    content: ' ▼ Mostrar Leyenda';
+    float: right;
+    font-size: 10px;
+    color: #999;
+}
+details[open] summary::after {
+    content: ' ▲ Ocultar';
+    color: #0078A8;
+}
+/* Imágenes dentro de la leyenda */
+details img {
+    max-width: 100%;
+    height: auto;
+    margin-top: 5px;
+}
+
+/* =========================================
+   5. HERRAMIENTA DE MEDICIÓN (Estilo Naranja)
+   ========================================= */
+/* El botón de la barra de herramientas */
+.leaflet-control-measure {
+    border: 2px solid white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.leaflet-control-measure a {
+    background-color: white; 
+    color: #ff8800; /* Icono naranja */
+}
+.leaflet-control-measure a:hover {
+    background-color: #fff8f0;
+}
+
+/* Cursor e interacciones al medir */
+.leaflet-container.leaflet-clickable,
+.leaflet-container.leaflet-grab {
+    cursor: crosshair !important; /* Cursor de precisión al medir */
+}
+
+/* Colores de la línea y puntos (Overrides forzosos) */
+.polyline-measure-unicode-icon {
+    color: #ff8800 !important; /* Color del cursor */
+    text-shadow: 1px 1px 0px #fff;
+}
+.layer-measure-resultline {
+    stroke: #ff8800 !important; /* Línea Naranja */
+    stroke-width: 3px;
+}
+.layer-measure-resultpoint {
+    fill: #ff8800 !important;
+    stroke: white !important;
+}
+
+/* Ventanita de resultados de medición */
+.leaflet-measure-resultpopup {
+    border: 2px solid #ff8800 !important;
+    background: rgba(255,255,255,0.95);
+}
+.leaflet-measure-resultpopup h3 {
+    color: #d35400 !important; /* Naranja oscuro */
+    border-bottom: 1px solid #ff8800;
+}
+.leaflet-measure-resultpopup .tasks a {
+    color: #d35400 !important;
+}
+
+/* =========================================
+   6. CONTROL DE MAPAS BASE (Estilo Google)
+   ========================================= */
+.basemap-container {
+    position: absolute;
+    bottom: 25px; /* Esquina inferior izquierda */
+    left: 10px;
+    z-index: 1000;
+    display: flex;
+    gap: 8px;
+}
+.basemap-btn {
+    width: 65px;
+    height: 65px;
+    border: 3px solid #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    position: relative;
+    background-color: #888;
+    transition: transform 0.2s, border-color 0.2s;
+    overflow: hidden;
+}
+.basemap-btn:hover {
+    transform: scale(1.05);
+    z-index: 1001;
+}
+.basemap-btn.active {
+    border-color: #ff8800; /* Naranja para indicar activo */
+    box-shadow: 0 0 0 2px #ff8800;
+}
+.basemap-btn .thumb {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+}
+.basemap-btn span {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    font-size: 10px;
+    text-align: center;
+    padding: 3px 0;
+    font-weight: bold;
+}
+
+/* =========================================
+   7. BOTÓN PANTALLA COMPLETA (Bottom-Right)
+   ========================================= */
+#fullscreen-btn {
+    position: absolute;
+    bottom: 40px; /* Arriba de los créditos de Leaflet */
+    right: 10px;
+    z-index: 1000;
+    background: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+    font-size: 18px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+#fullscreen-btn:hover {
+    background-color: #f4f4f4;
+    color: #000;
+}
+
+/* =========================================
+   8. RESPONSIVIDAD (Celulares)
+   ========================================= */
+@media (max-width: 768px) {
+    /* El panel de filtros baja al fondo */
+    #controls {
+        top: auto;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        border-radius: 15px 15px 0 0;
+        border-left: none;
+        border-top: 4px solid #0078A8;
+        padding: 10px;
+        display: flex;
+        gap: 10px;
+    }
+    .control-header { display: none; } /* Ocultar título en móvil */
+    .control-group { 
+        flex: 1; 
+        margin-bottom: 0;
+    }
+    
+    /* Subir los controles de mapa base para que no los tape el filtro */
+    .basemap-container {
+        bottom: 90px;
+        left: 10px;
+    }
+    
+    /* Subir botón fullscreen */
+    #fullscreen-btn {
+        bottom: 90px;
+        right: 10px;
+    }
+
+    /* Mover el control de capas (leyenda) para que no estorbe */
+    .leaflet-control-layers {
+        margin-top: 60px !important;
+    }
+}
